@@ -1,0 +1,137 @@
+/* ----------------- BODY ----------------- */
+body, html {
+  margin: 0;
+  padding: 0;
+  background-image: url('../img2.png'); /* đổi theo đúng đường dẫn */
+  background-size: cover;
+  background-repeat: no-repeat;
+  font-family: sans-serif;
+  color: white;
+  overflow-x: hidden;
+}
+
+/* font-size responsive */
+body {
+  font-size: calc(12px + 0.5vw);
+}
+
+/* ----------------- LINKS ----------------- */
+a {
+  color: white;
+  font-size: calc(12px + 0.5vw);
+  text-decoration: none;
+}
+
+/* ----------------- MAIN WRAP ----------------- */
+#main {
+  width: 100%;
+}
+
+#wrap {
+  position: relative;
+  margin: 0 auto;
+  width: 90vw;         /* responsive */
+  max-width: 1100px;   /* giới hạn desktop */
+  height: auto;
+  margin-top: 1vh;
+}
+
+/* ----------------- TEXT ----------------- */
+#text {
+  position: absolute;
+  top: 10%;
+  left: 10%;
+  width: 25vw; /* responsive */
+  max-width: 300px;
+  height: auto;
+}
+
+#code {
+  display: none;
+  color: rgb(196, 255, 255);
+  font-size: calc(14px + 0.8vw);
+  margin-top: 2vh;
+  line-height: 1.5em;
+  font-weight: bold;
+}
+
+/* ----------------- CLOCK ----------------- */
+#clock-box {
+  position: absolute;
+  top: 75%;
+  left: 5%;
+  font-size: calc(18px + 1vw);
+  display: none;
+}
+
+#clock-box a {
+  font-size: inherit;
+  text-decoration: none;
+}
+
+#clock {
+  margin-left: 1vw;
+}
+
+#clock .digit {
+  font-size: calc(36px + 1.5vw);
+}
+
+/* ----------------- CANVAS ----------------- */
+#canvas {
+  width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+/* ----------------- ERROR ----------------- */
+#error {
+  text-align: center;
+  margin-top: 5vh;
+  display: none;
+}
+
+/* ----------------- HAND CURSOR ----------------- */
+.hand {
+  cursor: pointer;
+}
+
+/* ----------------- SAY ----------------- */
+.say {
+  margin-left: 0.5vw;
+}
+
+/* ----------------- SPACING ----------------- */
+.space {
+  margin-right: 10vw;
+}
+
+/* ----------------- MESSAGE BOX ----------------- */
+#message-box {
+  position: absolute;
+  top: 70%;
+  left: 10%;
+  font-size: calc(18px + 0.8vw);
+  font-family: monospace;
+}
+
+/* ----------------- FALLING IMAGES ----------------- */
+.falling {
+  position: absolute;
+  top: -10vw;
+  object-fit: contain;
+  animation: fall linear infinite, glow ease-in-out infinite alternate;
+  opacity: 1;
+  pointer-events: none;
+}
+
+@keyframes fall {
+  0%   { transform: translate3d(var(--start-x), -10vw, 0) rotate(0deg); }
+  100% { transform: translate3d(var(--end-x), 110vh, 0) rotate(360deg); }
+}
+
+@keyframes glow {
+  from { opacity: 0.5; filter: drop-shadow(0 0 0.5vw rgba(255,200,230,0.7)); }
+  to   { opacity: 1;   filter: drop-shadow(0 0 2vw rgba(255,150,200,1)); }
+}

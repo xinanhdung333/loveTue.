@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Love Tuệ</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="happybday-main/file/default.css">
+
+    <!-- JS -->
+    <script src="happybday-main/file/jquery.min.js"></script>
+    <script src="happybday-main/file/jscex.min.js"></script>
+    <script src="happybday-main/file/jscex-parser.js"></script>
+    <script src="happybday-main/file/jscex-jit.js"></script>
+    <script src="happybday-main/file/jscex-builderbase.min.js"></script>
+    <script src="happybday-main/file/jscex-async.min.js"></script>
+    <script src="happybday-main/file/jscex-async-powerpack.min.js"></script>
+    <script src="happybday-main/file/functions.js" charset="utf-8"></script>
+    <script src="happybday-main/file/love.js" charset="utf-8"></script>
+
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            background-color: #ffe;
+        }
+        #wrap {
+            max-width: 1100px;
+            margin: 0 auto;
+            position: relative;
+        }
+        canvas {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        #code .say {
+            font-size: calc(12px + 1vw);
+        }
+        .falling {
+            position: absolute;
+            top: -10vw;
+            object-fit: contain;
+            animation: fall linear infinite, glow ease-in-out infinite alternate;
+            opacity: 1;
+            pointer-events: none;
+        }
+        @keyframes fall {
+            0%   { transform: translate3d(var(--start-x), -10vw, 0) rotate(0deg); }
+            100% { transform: translate3d(var(--end-x), 110vh, 0) rotate(360deg); }
+        }
+        @keyframes glow {
+            from { opacity: 0.5; filter: drop-shadow(0 0 0.5vw rgba(255,200,230,0.7)); }
+            to   { opacity: 1;   filter: drop-shadow(0 0 2vw rgba(255,150,200,1)); }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="main">
+        <div id="error">
+            <a href="http://www.google.cn/chrome/intl/zh-CN/landing_chrome.html?hl=zh-CN&brand=CHMI">Chrome</a> 
+            (<a href="http://firefox.com.cn/download/">Firefox</a>)
+        </div>
+
+        <!-- Nhạc -->
+        <audio autoplay loop id="myAudio">
+            <source src="happybday-main/aud.mp3" type="audio/mp3">
+        </audio>
+
+        <div id="wrap">
+            <div id="text">
+                <div id="code">
+                    <span class="say">Tuệ yêu dấu 💞</span><br>
+                    <span class="say">Happy Birthday 🎈</span><br>
+                    <span class="say">Chúc Tuệ</span><br>
+                    <span class="say">Ngày càng xinh đẹp 🍀</span><br>
+                    <span class="say">Và ngày càng vui vẻ, tích cực 💕</span><br>
+                    <span class="say">I loved you ❤️</span><br>
+                    <span class="say">And I will always love u 🥺❤️</span><br>
+                    <span class="say">Chúc Tuệ đỗ vào trường mong muốn ❤️😘</span><br>
+                </div>
+            </div>
+
+            <div id="clock-box">
+                <span id="clock">577 days 0 hours 0 minutes 0 seconds</span>
+            </div>
+
+            <canvas id="canvas"></canvas>
+        </div>
+    </div>
+
+    <script>
+        function playAudio() {
+            var audio = document.getElementById("myAudio");
+            audio.play();
+        }
+
+        (function() {
+            var canvas = $('#canvas');
+            if (!canvas[0].getContext) { $("#error").show(); return; }
+
+            var width = window.innerWidth;
+            var height = window.innerHeight;
+            canvas.attr("width", width);
+            canvas.attr("height", height);
+
+            var opts = {
+                seed: { x: width / 2 - 20, color: "rgb(190, 26, 37)", scale: 2 },
+                branch: [ [535, 680, 570, 250, 500, 200, 30, 100, []] ],
+                bloom: { num: 700, width: 1080, height: 650 },
+                footer: { width: 1200, height: 5, speed: 10 }
+            };
+
+            var tree = new Tree(canvas[0], width, height, opts);
+            var seed = tree.seed;
+            var foot = tree.footer;
+            var hold = 1;
+
+            canvas.click(function(e) {
+                playAudio();
+                var offset = canvas.offset(), x = e.pageX - offset.left, y = e.pageY - offset.top;
+                if (seed.hover(x, y)) { hold = 0; canvas.unbind("click mousemove"); canvas.removeClass('hand'); }
+            }).mousemove(function(e) {
+                var offset = canvas.offset(), x = e.pageX - offset.left, y = e.pageY - offset.top;
+                canvas.toggleClass('hand', seed.hover(x, y));
+            });
+
+            var seedAnimate = eval(Jscex.compile("async", function () {
+                seed.draw();
+                while (hold) { $await(Jscex.Async.sleep(10)); }
+                while (seed.canScale()) { seed.scale(0.95); $await(Jscex.Async.sleep(10)); }
+                while (seed.canMove()) { seed.move(0, 2); foot.draw(); $await(Jscex.Async.sleep(10)); }
+            }));
+
+            var growAnimate = eval(Jscex.compile("async", function () {
+                do { tree.grow(); $await(Jscex.Async.sleep(10)); } while (tree.canGrow());
+            }));
+
+            var flowAnimate = eval(Jscex.compile("async", function () {
+                do { tree.flower(2); $await(Jscex.Async.sleep(10)); } while (tree.canFlower());
+            }));
+
+            var moveAnimate = eval(Jscex.compile("async", function () {
+                tree.snapshot("p1", 240, 0, 610, 680);
+                while (tree.move("p1", 500, 0)) { foot.draw(); $await(Jscex.Async.sleep(10)); }
+                foot.draw();
+                tree.snapshot("p2", 500, 0, 610, 680);
+                // Set background cây (data URL)
+canvas.parent().css("background", "url('happybday-main/image.png') center/cover no-repeat");
+            }));
+
+            var textAnimate = eval(Jscex.compile("async", function () {
+                $("#code").show().typewriter();
+            }));
+
+            var runAsync = eval(Jscex.compile("async", function () {
+                $await(seedAnimate());
+                $await(growAnimate());
+                $await(flowAnimate());
+                $await(moveAnimate());
+                textAnimate().start();
+            }));
+
+            runAsync().start();
+        })();
+
+        // Ảnh rơi
+        const images = [];
+        for(let i=1; i<=18; i++){
+            images.push(`happybday-main/anh${i}.jpg`);
+        }
+        const total = 25;
+        for (let i = 0; i < total; i++) {
+            let img = document.createElement("img");
+            img.src = images[Math.floor(Math.random() * images.length)];
+            img.className = "falling";
+            let startX = Math.random() * 100 + "vw";
+            let endX   = (Math.random() * 100 + 20) + "vw";
+            img.style.setProperty("--start-x", startX);
+            img.style.setProperty("--end-x", endX);
+            img.style.animationDuration = (10 + Math.random() * 10) + "s, " + (3 + Math.random() * 3) + "s";
+            img.style.animationDelay = (Math.random() * 5) + "s, 0s";
+            let size = 8 + Math.random() * 5; // 8vw ~ 13vw
+            img.style.width = size + "vw";
+            img.style.height = size + "vw";
+            document.body.appendChild(img);
+        }
+    </script>
+</body>
+</html>
